@@ -17,6 +17,13 @@ hide_streamlit_style = """
             header {visibility: hidden;}
             footer {visibility: hidden;}
             [data-testid="stToolbar"] {display: none;}
+            button[title^=Exit]+div [data-testid=stImage]{
+                text-align: center;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+                }
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -27,7 +34,7 @@ def People_Count():
     model = YOLO("yolov8n.pt")  # load an official model
     
     # Start video capture
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(4)
     
     # Reduce frame size for faster processing
     width = 1280
