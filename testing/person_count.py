@@ -8,13 +8,26 @@ import time
 people_counter = ''
 last_play_time = 0  # Initialize the last play time to zero
 
+st.set_page_config(layout="wide", page_title="People Counter", page_icon="👥")
+
+# Add custom CSS to hide the Streamlit menu and toolbar
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            header {visibility: hidden;}
+            footer {visibility: hidden;}
+            [data-testid="stToolbar"] {display: none;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 def People_Count():
     global people_counter, last_play_time
     # Load the YOLO model
     model = YOLO("yolov8n.pt")  # load an official model
     
     # Start video capture
-    cap = cv2.VideoCapture(4)
+    cap = cv2.VideoCapture(0)
     
     # Reduce frame size for faster processing
     width = 1280
@@ -24,21 +37,6 @@ def People_Count():
 
     frame_skip = 1
     frame_count = 0
-
-    st.title("Real-time People Counter")
-    st.markdown(
-        """
-        <style>
-            button[title^=Exit]+div [data-testid=stImage]{
-                text-align: center;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 100%;
-            }
-        </style>
-        """, unsafe_allow_html=True
-    )
     
     stframe = st.empty()
 
