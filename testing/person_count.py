@@ -2,8 +2,14 @@ import cv2
 import numpy as np
 import streamlit as st
 from ultralytics import YOLO
+from playsound import playsound
+import time
+
+people_counter = ''
+last_play_time = 0  # Initialize the last play time to zero
 
 def People_Count():
+    global people_counter, last_play_time
     # Load the YOLO model
     model = YOLO("yolov8n.pt")  # load an official model
     
@@ -61,6 +67,13 @@ def People_Count():
 
         # Get the text size for "People Counter" and draw the filled rectangle
         people_counter_text = "People Counter: " + str(p)
+        people_counter = p
+
+        current_time = time.time()  # Get the current time
+        if people_counter > 1 and current_time - last_play_time > 60:  # Check if 60 seconds have passed
+            playsound("resource/10_person.mp3")
+            last_play_time = current_time  # Update the last play time
+
         (text_width, text_height), baseline = cv2.getTextSize(people_counter_text, cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
         top_left_corner = (20, 70 - text_height - baseline - 5)
         bottom_right_corner = (330, 70)
