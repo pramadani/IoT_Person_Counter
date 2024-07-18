@@ -14,7 +14,7 @@ def People_Count():
     model = YOLO("yolov8n.pt")  # load an official model
     
     # Start video capture
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(4)
     
     # Reduce frame size for faster processing
     width = 1280
@@ -26,6 +26,20 @@ def People_Count():
     frame_count = 0
 
     st.title("Real-time People Counter")
+    st.markdown(
+        """
+        <style>
+            button[title^=Exit]+div [data-testid=stImage]{
+                text-align: center;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+        </style>
+        """, unsafe_allow_html=True
+    )
+    
     stframe = st.empty()
 
     while True:
@@ -70,7 +84,7 @@ def People_Count():
         people_counter = p
 
         current_time = time.time()  # Get the current time
-        if people_counter > 1 and current_time - last_play_time > 60:  # Check if 60 seconds have passed
+        if people_counter > 1 and current_time - last_play_time > 20:  # Check if 60 seconds have passed
             playsound("resource/10_person.mp3")
             last_play_time = current_time  # Update the last play time
 
