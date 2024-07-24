@@ -27,7 +27,7 @@ st.markdown(
 # Function to get data from the Raspberry Pi Pico W
 def get_data():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(('127.0.0.1', 400))
+        s.connect(('192.168.58.17', 400))
         s.sendall(b'REQUEST_DATA')
         data = s.recv(1024).decode('utf-8')
     return float(data)  # Convert received data to float
@@ -45,7 +45,6 @@ fig_line.add_trace(go.Scatter(x=[], y=[], mode='lines+markers', name='Temperatur
 fig_line.update_layout(
     yaxis_title="Temperature (°C)",
     xaxis=dict(
-        range=[0, 10],  # Adjust as needed
         showticklabels=False,  # Hide x-axis tick labels
         showline=False,       # Hide x-axis line
         showgrid=False        # Hide x-axis grid lines
@@ -88,10 +87,13 @@ while True:
     
     temperature_data.append(temp)
     
-    current_time = time.time() - start_time
+    # Keep only the last 10 data points
+    if len(temperature_data) > 10:
+        temperature_data = temperature_data[-10:]
+
     fig_line.data[0].x = list(range(len(temperature_data)))
     fig_line.data[0].y = temperature_data
-
+    
     # Update gauge chart value
     fig_gauge.data[0].value = temp
     
