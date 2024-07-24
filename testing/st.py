@@ -51,7 +51,7 @@ st.markdown(
 # Function to get data from the Raspberry Pi Pico W
 def get_data():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(('192.168.58.17', 400))
+        s.connect(('127.0.0.1', 400))
         s.sendall(b'REQUEST_DATA')
         data = s.recv(1024).decode('utf-8')
     return float(data)  # Convert received data to float

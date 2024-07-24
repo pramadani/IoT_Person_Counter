@@ -20,7 +20,7 @@ while True:
         client_socket.close()
 
         # Menunggu beberapa detik sebelum mengirim data lagi
-        time.sleep(5)
+        time.sleep(1)
     except Exception as e:
         print(f"Error: {e}")
-        time.sleep(5)
+        time.sleep(1)
