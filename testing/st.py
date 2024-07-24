@@ -1,12 +1,21 @@
 import streamlit as st
 import socket
 import time
+import pandas as pd
 import plotly.graph_objects as go
+from datetime import datetime
 
 # Set the default page configuration to wide mode
 st.set_page_config(
-    layout="wide"  # Set layout to wide
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
+
+logo_url = './resource/logo_crop.png'
+st.sidebar.image(logo_url)
+
+with st.sidebar:
+    st.text("Menu")
 
 # Add custom CSS to hide specific elements and adjust padding
 st.markdown(
@@ -18,6 +27,21 @@ st.markdown(
     
     .block-container.st-emotion-cache-1jicfl2.ea3mdgi5 {
         padding: 0.5rem 2.5rem !important;
+    }
+    [data-testid="stMetric"] {
+        background-color: #f0f0f0;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    [data-testid="stSidebar"] {
+        width: 200px !important;
+    }
+    [data-testid="stSidebarHeader"] {
+        padding: 0px !important;
+    }
+    [data-testid="stAppViewBlockContainer"] {
+        height: 100vh;
+        overflow: auto;
     }
     </style>
     """,
@@ -35,76 +59,60 @@ def get_data():
 # Initialize a list to store temperature data
 temperature_data = []
 
-# Create a Plotly figure for the line chart
-fig_line = go.Figure()
+# Create a DataFrame for temperature data
+df = pd.DataFrame(columns=["Time", "Temperature"])
 
-# Add a line plot to the figure
-fig_line.add_trace(go.Scatter(x=[], y=[], mode='lines+markers', name='Temperature'))
+col1, col2, col3 = st.columns([2, 1, 1])
 
-# Set figure layout for line chart
-fig_line.update_layout(
-    yaxis_title="Temperature (°C)",
-    xaxis=dict(
-        range=[0, 10],  # Adjust as needed
-        showticklabels=False,  # Hide x-axis tick labels
-        showline=False,       # Hide x-axis line
-        showgrid=False        # Hide x-axis grid lines
-    ),
-    yaxis=dict(range=[16, 30]),  # Adjust as needed
-    height=300  # Resize the height of the line chart
-)
-
-# Create a Plotly figure for the gauge
-fig_gauge = go.Figure()
-
-# Add a gauge to the figure
-fig_gauge.add_trace(go.Indicator(
-    mode="gauge+number",
-    value=0,
-    gauge=dict(
-        axis=dict(range=[16, 30]),
-        bar=dict(color="royalblue"),
-        steps=[dict(range=[16, 22], color="lightgray"), dict(range=[22, 30], color="lightcyan")]
-    )
-))
-
-# Set figure layout for gauge
-fig_gauge.update_layout(height=280)  # Resize the height of the gauge
-
-# Create a two-column layout
-col1, col2 = st.columns([10, 3])  # Adjust the second value to take the remaining space
-
-# Create placeholders for the charts in the two columns
 with col1:
-    st.title("Real-Time Temperature Data")
+    with st.expander("People Counter", expanded=True):
+        frame_placeholder = st.container(height=425, border=True)
+            
 with col2:
-    with st.expander("chart"):
+    with st.expander("Linimasa Temperatur", expanded=True):
         line_chart_placeholder = st.empty()
-    with st.expander("gauge"):
+    with st.expander("Temperatur Real Time", expanded=True):
         gauge_placeholder = st.empty()
 
-start_time = time.time()
+with col3:
+    with st.expander("History", expanded=True):
+        history_placeholder = st.container(height=305, border=True)
+        
+    info_placeholder = st.container(height=100, border=True)
+
+last_temp = 0
+last_time_update = 0
 
 while True:
+    current_time = time.time()
+    local_time = datetime.fromtimestamp(current_time)
+    formatted_time = local_time.strftime("%H:%M:%S")
+    
     temp = get_data()
     
-    temperature_data.append(temp)
+    temperature_data.append((formatted_time, temp))
     
     if len(temperature_data) > 10:
         temperature_data = temperature_data[-10:]
     
-    current_time = time.time() - start_time
-    fig_line.data[0].x = list(range(len(temperature_data)))
-    fig_line.data[0].y = temperature_data
-
-    # Update gauge chart value
-    fig_gauge.data[0].value = temp
+    df = pd.DataFrame(temperature_data, columns=["Time", "Temperature"])
+    df.set_index("Time", inplace=True)
     
-    # Update the line chart and gauge chart
+    # Update the line chart
     with line_chart_placeholder.container():
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.line_chart(df, height=200)
 
+    # Update the gauge chart
     with gauge_placeholder.container():
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        delta_temp = temp - last_temp
+        
+        # if delta_temp == 0:
+            
+        if temp > last_temp:
+            st.metric(label="Laboratorium", value=str(temp) + " °C", delta=f"{delta_temp} pada {formatted_time[:5]}", delta_color="inverse")
+            last_temp = temp
+        elif temp < last_temp:
+            st.metric(label="Laboratorium", value=str(temp) + " °C", delta=f"{delta_temp} pada {formatted_time[:5]}", delta_color="inverse")
+            last_temp = temp
     
     time.sleep(1)
