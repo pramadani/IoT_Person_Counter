@@ -78,8 +78,10 @@ col1, col2 = st.columns([10, 3])  # Adjust the second value to take the remainin
 with col1:
     st.title("Real-Time Temperature Data")
 with col2:
-    line_chart_placeholder = st.empty()
-    gauge_placeholder = st.empty()
+    with st.expander("chart"):
+        line_chart_placeholder = st.empty()
+    with st.expander("gauge"):
+        gauge_placeholder = st.empty()
 
 start_time = time.time()
 
@@ -87,6 +89,9 @@ while True:
     temp = get_data()
     
     temperature_data.append(temp)
+    
+    if len(temperature_data) > 10:
+        temperature_data = temperature_data[-10:]
     
     current_time = time.time() - start_time
     fig_line.data[0].x = list(range(len(temperature_data)))
