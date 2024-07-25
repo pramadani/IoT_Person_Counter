@@ -6,6 +6,24 @@ import cv2
 from datetime import datetime
 from ultralytics import YOLO
 from playsound import playsound
+import threading
+
+latest_data = "0"
+
+def receive_data():
+    global latest_data
+    addr = ('192.168.58.17', 65432)
+    s = socket.socket()
+    s.connect(addr)
+    s.send(b'streamlit')
+
+    while True:
+        data = s.recv(1024)
+        if data:
+            latest_data = data.decode('utf-8')
+            
+threading.Thread(target=receive_data, daemon=True).start()
+
 
 # Set the default page configuration to wide mode
 st.set_page_config(
@@ -53,7 +71,7 @@ st.markdown(
 model = YOLO("yolov8n.pt")  # load an official model
 
 # Start video capture
-cap = cv2.VideoCapture(4)
+cap = cv2.VideoCapture(0)
 
 width = 640
 height = 360
@@ -63,13 +81,8 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 frame_skip = 1
 frame_count = 0
 
-# Function to get data from the Raspberry Pi Pico W
 def get_data():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(('192.168.56.68', 400))
-        s.sendall(b'REQUEST_DATA')
-        data = s.recv(1024).decode('utf-8')
-    return float(data)  # Convert received data to float
+    return float(latest_data)
 
 # Initialize a list to store temperature data
 if 'temperature_data' not in st.session_state:
@@ -100,6 +113,7 @@ last_gauge_update = 0
 line_chart_update_interval = 5  # seconds
 gauge_update_interval = 1  # seconds
 last_temp = None
+last_play_time = 0
 
 while True:
     current_time = time.time()
