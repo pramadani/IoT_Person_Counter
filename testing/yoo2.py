@@ -7,24 +7,6 @@ import cv2
 from datetime import datetime
 from ultralytics import YOLO
 from playsound import playsound
-import threading
-
-latest_data = "0"
-
-def receive_data():
-    global latest_data
-    addr = ('192.168.58.17', 65432)
-    s = socket.socket()
-    s.connect(addr)
-    s.send(b'streamlit')
-
-    while True:
-        data = s.recv(1024)
-        if data:
-            latest_data = data.decode('utf-8')
-            
-threading.Thread(target=receive_data, daemon=True).start()
-
 
 # Set the default page configuration to wide mode
 st.set_page_config(
@@ -72,7 +54,7 @@ st.markdown(
 model = YOLO("yolov8n.pt")  # load an official model
 
 # Start video capture
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(4)
 
 width = 640
 height = 360
@@ -82,8 +64,13 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 frame_skip = 1
 frame_count = 0
 
+# Function to get data from the Raspberry Pi Pico W
 def get_data():
-    return float(latest_data)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(('192.168.56.68', 400))
+        s.sendall(b'REQUEST_DATA')
+        data = s.recv(1024).decode('utf-8')
+    return float(data)  # Convert received data to float
 
 # Initialize a list to store temperature data
 if 'temperature_data' not in st.session_state:
@@ -159,7 +146,7 @@ while True:
     people_counter_text = "People Counter: " + str(p)
     people_counter = p
 
-    if people_counter > 10 and current_time - last_play_time > 20:  # Check if 20 seconds have passed
+    if people_counter > 1 and current_time - last_play_time > 20:  # Check if 20 seconds have passed
         playsound("resource/10_person.mp3")
         last_play_time = current_time  # Update the last play time
 
