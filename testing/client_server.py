@@ -2,7 +2,7 @@ import socket
 import random
 import time
 
-server_ip = '192.168.58.17'  # Gantilah dengan IP server jika berbeda
+server_ip = '192.168.56.68'  # Gantilah dengan IP server jika berbeda
 server_port = 400
 
 while True:
