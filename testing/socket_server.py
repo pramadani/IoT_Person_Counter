@@ -22,6 +22,7 @@ def socket_server():
                 client_socket.sendall(global_data.encode('utf-8'))
             else:
                 global_data = data
+                print(global_data)
 
         client_socket.close()
 
