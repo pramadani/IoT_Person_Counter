@@ -12,7 +12,7 @@ while True:
         client_socket.connect((server_ip, server_port))
 
         # Mengirim data
-        data = str(random.randint(16, 30))
+        data = str(random.randint(0, 100))
         print(data)
         client_socket.send(data.encode('utf-8'))
 

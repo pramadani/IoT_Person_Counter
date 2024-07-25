@@ -146,7 +146,7 @@ while True:
     people_counter_text = "People Counter: " + str(p)
     people_counter = p
 
-    if people_counter > 10 and current_time - last_play_time > 20:  # Check if 20 seconds have passed
+    if people_counter > 1 and current_time - last_play_time > 20:  # Check if 20 seconds have passed
         playsound("resource/10_person.mp3")
         last_play_time = current_time  # Update the last play time
 
