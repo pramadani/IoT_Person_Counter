@@ -96,6 +96,7 @@ while True:
         temperature_data = temperature_data[-10:]
     
     df = pd.DataFrame(temperature_data, columns=["Time", "Temperature"])
+    df["Temperature"] = df["Temperature"].apply(lambda x: f"{x} C")
     df.set_index("Time", inplace=True)
     
     # Update the line chart
