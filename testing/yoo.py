@@ -2,11 +2,9 @@ import streamlit as st
 import socket
 import time
 import pandas as pd
-import plotly.graph_objects as go
 import cv2
 from datetime import datetime
 from ultralytics import YOLO
-import numpy as np
 from playsound import playsound
 
 # Set the default page configuration to wide mode
@@ -65,7 +63,6 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 frame_skip = 1
 frame_count = 0
 
-
 # Function to get data from the Raspberry Pi Pico W
 def get_data():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -98,16 +95,16 @@ with col3:
 
 # Initialize timing variables
 start_time = time.time()
-last_play_time = 0
-temp_update_time = 0
-last_temp = 0
+last_temp_update = 0
+last_gauge_update = 0
+line_chart_update_interval = 5  # seconds
+gauge_update_interval = 1  # seconds
+last_temp = None
 
 while True:
-    current_time = time.time() - start_time
+    current_time = time.time()
 
     ret, img = cap.read()
-
-
     if not ret:
         break
     
@@ -147,8 +144,7 @@ while True:
     people_counter_text = "People Counter: " + str(p)
     people_counter = p
 
-    current_time = time.time()  # Get the current time
-    if people_counter > 1 and current_time - last_play_time > 20:  # Check if 60 seconds have passed
+    if people_counter > 1 and current_time - last_play_time > 20:  # Check if 20 seconds have passed
         playsound("resource/10_person.mp3")
         last_play_time = current_time  # Update the last play time
 
@@ -167,8 +163,24 @@ while True:
     with frame_placeholder.container():
         frame_placeholder.image(img_rgb, channels="RGB")
 
-    
-    if current_time - temp_update_time >= 20:
+    # Update gauge chart every second
+    if current_time - last_gauge_update >= gauge_update_interval:
+        temp = get_data()
+        temp = float(temp)
+        
+        # Update the gauge chart
+        with gauge_placeholder.container():
+            if last_temp is not None:
+                delta_temp = temp - last_temp
+                st.metric(label="Laboratorium", value=f"{temp} °C", delta=f"{delta_temp:.2f} °C")
+            else:
+                st.metric(label="Laboratorium", value=f"{temp} °C")
+            last_temp = temp
+        
+        last_gauge_update = current_time
+
+    # Update line chart every 5 seconds
+    if current_time - last_temp_update >= line_chart_update_interval:
         # Get data
         current_time_str = datetime.now().strftime("%H:%M:%S")
         temp = get_data()
@@ -185,14 +197,8 @@ while True:
         with line_chart_placeholder.container():
             st.line_chart(df, height=200)
         
-        # Update the gauge chart
-        with gauge_placeholder.container():
-            last_temp = df["Temperature"].iloc[-2] if len(df) > 1 else df["Temperature"].iloc[-1]
-            delta_temp = df["Temperature"].iloc[-1] - last_temp
-            st.metric(label="Laboratorium", value=f"{df['Temperature'].iloc[-1]} °C", delta=f"{delta_temp:.2f} °C pada {current_time_str[:5]}")
-        
         # Update the last update time
-        temp_update_time = current_time
+        last_temp_update = current_time
     
     # Sleep for a short duration to prevent high CPU usage
-    time.sleep(1)
+    time.sleep(0.1)
