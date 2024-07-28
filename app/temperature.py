@@ -1,11 +1,7 @@
-
 import socket
-import threading
+from multiprocessing import Process # type: ignore
 
-temperature = "0"
-
-def receive_data(IP, PORT):
-    global temperature
+def receive_data(IP, PORT, temperature):
     addr = (IP, PORT)
     s = socket.socket()
     s.connect(addr)
@@ -14,7 +10,9 @@ def receive_data(IP, PORT):
     while True:
         data = s.recv(1024)
         if data:
-            temperature = data.decode('utf-8')
+            temperature.value = data.decode('utf-8')
 
-def start_temperature_thread(IP, PORT):
-    threading.Thread(target=receive_data, args=(IP, PORT), daemon=True).start()
+def start_temperature_process(IP, PORT, temperature):
+    process = Process(target=receive_data, args=(IP, PORT, temperature))
+    process.daemon = True
+    process.start()
