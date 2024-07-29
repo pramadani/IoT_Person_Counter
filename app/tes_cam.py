@@ -1,11 +1,10 @@
 import streamlit as st
-import cv2
 import multiprocessing
-from PIL import Image
-from ultralytics import YOLO
 import time
 
 def capture_and_draw_frame(namespace):
+    import cv2
+    from PIL import Image
     cap = cv2.VideoCapture(0)
 
     while True:
@@ -33,6 +32,8 @@ def capture_and_draw_frame(namespace):
     cap.release()
 
 def predict(namespace):
+    from ultralytics import YOLO
+    
     model = YOLO('yolov8n.pt')
 
     while True:
@@ -40,6 +41,12 @@ def predict(namespace):
             img = namespace.capture
             results = model(img)
             namespace.result = results
+            
+def start_camera_thread(namespace):
+    capture_process = multiprocessing.Process(target=capture_and_draw_frame, args=(namespace,)) # type: ignore
+    predict_process = multiprocessing.Process(target=predict, args=(namespace,)) # type: ignore
+    capture_process.start()
+    predict_process.start()
 
 def main():
     manager = multiprocessing.Manager() # type: ignore

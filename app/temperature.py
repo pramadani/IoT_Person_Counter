@@ -1,7 +1,7 @@
 import socket
-from multiprocessing import Process # type: ignore
+from multiprocessing import Process, Manager  # type: ignore
 
-def receive_data(IP, PORT, temperature):
+def receive_data(IP, PORT, namespace):
     addr = (IP, PORT)
     s = socket.socket()
     s.connect(addr)
@@ -10,9 +10,9 @@ def receive_data(IP, PORT, temperature):
     while True:
         data = s.recv(1024)
         if data:
-            temperature.value = data.decode('utf-8')
+            namespace.temperature = float(data.decode('utf-8'))
 
-def start_temperature_process(IP, PORT, temperature):
-    process = Process(target=receive_data, args=(IP, PORT, temperature))
+def start_temperature_process(IP, PORT, namespace):
+    process = Process(target=receive_data, args=(IP, PORT, namespace))
     process.daemon = True
     process.start()
