@@ -18,4 +18,5 @@ def check_playsound(delay, namespace):
 
 def start_sound_process(delay, namespace):
     process = multiprocessing.Process(target=check_playsound, args=(delay, namespace))
+    process.daemon = True
     process.start()
