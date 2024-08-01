@@ -1,4 +1,0 @@
-pygame
-ultralytics
-streamlit
-plotly
