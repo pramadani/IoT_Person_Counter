@@ -44,5 +44,7 @@ def predict(namespace):
 def start_camera_thread(namespace):
     capture_process = multiprocessing.Process(target=capture_and_draw_frame, args=(namespace,))
     predict_process = multiprocessing.Process(target=predict, args=(namespace,))
+    capture_process.daemon = True
+    predict_process.daemon = True
     capture_process.start()
     predict_process.start()
