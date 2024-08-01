@@ -12,8 +12,9 @@ def start_playsound(path):
 
 def check_playsound(delay, namespace):
     while True:
-        if namespace.person_count >= 10:
-            start_playsound("10_person.mp3")
+        if namespace.person_count is not None:
+            if namespace.person_count >= 0:
+                start_playsound("10_person.mp3")
         
         time.sleep(delay)
         
