@@ -1,7 +1,12 @@
 import socket
 from multiprocessing import Process
 
-def receive_data(IP, PORT, namespace):
+IP = "0.0.0.0"
+PORT = 65432
+
+def receive_data(namespace):
+    global IP
+    global PORT
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((IP, PORT))
     server_socket.listen()
@@ -23,7 +28,7 @@ def receive_data(IP, PORT, namespace):
     finally:
         server_socket.close()
 
-def start_temperature_process(IP, PORT, namespace):
-    process = Process(target=receive_data, args=(IP, PORT, namespace))
+def start_temperature_process(namespace):
+    process = Process(target=receive_data, args=(namespace,))
     process.daemon = True
     process.start()

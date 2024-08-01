@@ -1,76 +1,75 @@
 from multiprocessing import Manager  # type: ignore
 import streamlit as st
 import time
-from port import IP, PORT
 from temperature import start_temperature_process
 from sound import start_sound_process
 from person_count import start_camera_thread
 from data import update_temp_df, update_count_df
 from style import css
 
-if __name__ == "__main__":
-    st.set_page_config(
-        layout="wide",
-        initial_sidebar_state="expanded",
-    )
+st.set_page_config(
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-    st.sidebar.image('./resources/logo_crop.png')
-    
-    with st.sidebar:
-        st.text("Menu")
+st.markdown(css, unsafe_allow_html=True)
 
-    st.markdown(css, unsafe_allow_html=True)
+st.sidebar.image('./resources/logo_crop.png')
+
+with st.sidebar:
+    st.text("Menu")
+
+@st.cache_resource
+def init():
+    manager = Manager()
+    ns = manager.Namespace()
     
-    @st.cache_resource
-    def init():
-        manager = Manager()
-        ns = manager.Namespace()
+    ns.temperature = None
+    ns.person_count = None
+    ns.frame = None
+
+    start_temperature_process(ns)
+    start_sound_process(10, ns)
+    start_camera_thread(ns)
+    
+    return ns
+
+last_count = None
+last_temp = None
+
+col1, col2, col3 = st.columns([2,1,1])
+
+with col1:
+    with st.expander("Camera", expanded=True):
+        frame_container = st.empty()
+        with frame_container:
+            st.write("Waiting for Camera")
         
-        ns.temperature = None
-        ns.person_count = None
-        ns.frame = None
-
-        start_temperature_process(IP, PORT, ns)
-        start_sound_process(10, ns)
-        start_camera_thread(ns)
-        
-        return ns
-    
-    ns = init()
-    
-    col1, col2, col3 = st.columns([2,1,1])
-
-    with col1:
-        with st.expander("Camera", expanded=True):
-            frame_container = st.empty()
-            with frame_container:
-                st.write("Waiting for Camera")
-            
-    with col2:
-        with st.expander("Person Count", expanded=True):
-            person_count_container = st.empty()
-            with person_count_container:
-                st.write("Waiting for AI Model")
+with col2:
+    with st.expander("Person Count", expanded=True):
+        person_count_container = st.empty()
+        with person_count_container:
+            st.write("Waiting for AI Model")
+                
+    with st.container(border=True):
+        person_df_container = st.empty()
+        with person_df_container:
+            st.write("Waiting for AI Model")
                     
-        with st.container(border=True):
-            person_df_container = st.empty()
-            with person_df_container:
-                st.write("Waiting for AI Model")
-                        
-    with col3:
-        with st.expander("Temperature", expanded=True):
-            temperature_container = st.empty()
-            with temperature_container:
-                st.write("Waiting for Sensor")
-    
-        with st.container(border=True):
-            temperature_df_container = st.empty()
-            with temperature_df_container:
-                st.write("Waiting for Sensor")
+with col3:
+    with st.expander("Temperature", expanded=True):
+        temperature_container = st.empty()
+        with temperature_container:
+            st.write("Waiting for Sensor")
 
-    last_count = None
-    last_temp = None
-    
+    with st.container(border=True):
+        temperature_df_container = st.empty()
+        with temperature_df_container:
+            st.write("Waiting for Sensor")
+
+if __name__ == "__main__":   
+    ns = init()
+     
     while True:
         with temperature_container:
             if ns.temperature is not None and ns.temperature != last_temp:
