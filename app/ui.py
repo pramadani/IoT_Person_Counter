@@ -89,7 +89,7 @@ if __name__ == "__main__":
             with temperature_df_container:
                 st.write("Waiting for Sensor")
 
-    last_count = 0
+    last_count = None
     last_temp = 0
     
     while True:
@@ -99,7 +99,10 @@ if __name__ == "__main__":
                 st.metric(label="Realtime Temperature", value=str(ns.temperature))
             
         with person_count_container:
-            if ns.person_count and ns.person_count != last_count:
+            if ns.person_count == 0 and last_count is not None and ns.person_count != last_count:
+                last_count = ns.person_count
+                st.metric(label="Realtime Counter", value=str(ns.person_count))
+            elif ns.person_count and ns.person_count != last_count:
                 last_count = ns.person_count
                 st.metric(label="Realtime Counter", value=str(ns.person_count))
                 
