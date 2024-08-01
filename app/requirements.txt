@@ -1,4 +1,4 @@
-playsound==1.2.2
+pygame
 ultralytics
 streamlit
 plotly
