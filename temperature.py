@@ -21,7 +21,11 @@ def receive_data(namespace):
                     data = conn.recv(1024)
                     if not data:
                         break
-                    namespace.temperature = float(data.decode('utf-8'))
+                    try:
+                        temperature_now = float(data.decode('utf-8'))
+                    except:
+                        continue
+                    namespace.temperature = temperature_now
                     print(f"Received data: {namespace.temperature}")
     except Exception as e:
         print(f"An error occurred: {e}")
