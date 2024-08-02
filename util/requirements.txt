@@ -2,4 +2,3 @@ pygame
 ultralytics
 streamlit
 plotly
-altair
