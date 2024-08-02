@@ -41,9 +41,18 @@ if __name__ == "__main__":
 
     ip = "192.168.57.140"
     port = 65432
-    client_socket = conn_init(ip, port)
-    
+
     while True:
-        temperature = get_temperature(sensor)
-        send_to_server(client_socket, temperature)
-        time.sleep(1)
+        try:
+            client_socket = conn_init(ip, port)
+            
+            while True:
+                temperature = get_temperature(sensor)
+                try:
+                    send_to_server(client_socket, temperature)
+                except:
+                    break
+                time.sleep(1)
+        except:
+            print("Error connecting to server. Retrying in 5 seconds.")
+            time.sleep(5)

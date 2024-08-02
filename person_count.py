@@ -3,7 +3,7 @@ import multiprocessing
 def capture_and_draw_frame(namespace):
     import cv2
     from PIL import Image
-    cap = cv2.VideoCapture(4)
+    cap = cv2.VideoCapture(0)
 
     while True:
         ret, img = cap.read()
