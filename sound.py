@@ -1,9 +1,10 @@
 import pygame # type: ignore
 import multiprocessing
 import time
-pygame.mixer.init()
 
 def play_terbilang(angka):
+    pygame.mixer.init()
+
     def terbilang(n):
         satuan = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"]
         if n < 0:
@@ -55,6 +56,7 @@ def play_terbilang(angka):
         play_terbilang_angka(word)
 
 def play_suhu_mencapai(suhu):
+    pygame.mixer.init()
     pygame.mixer.music.load("resources/sound/suhu_mencapai.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
@@ -66,6 +68,7 @@ def play_suhu_mencapai(suhu):
         pygame.time.Clock().tick(10)
 
 def play_orang_mencapai(jumlah):
+    pygame.mixer.init()
     pygame.mixer.music.load("resources/sound/orang_mencapai.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
@@ -73,18 +76,21 @@ def play_orang_mencapai(jumlah):
     play_terbilang(jumlah)
 
 def play_menurunkan_suhu():
+    pygame.mixer.init()
     pygame.mixer.music.load("resources/sound/menurunkan.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         pygame.time.Clock().tick(10)
 
 def play_menaikkan_suhu():
+    pygame.mixer.init()
     pygame.mixer.music.load("resources/sound/menaikkan.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         pygame.time.Clock().tick(10)
 
 def play_ramai():
+    pygame.mixer.init()
     pygame.mixer.music.load("resources/sound/ramai.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
@@ -92,7 +98,6 @@ def play_ramai():
 
 def check_playsound(delay, namespace):
     while True:
-
         if namespace.person_count is None or namespace.temperature is None:
             time.sleep(0.1)
             continue
