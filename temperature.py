@@ -1,5 +1,5 @@
 import socket
-from multiprocessing import Process
+from multiprocessing import Process # type: ignore
 
 IP = "0.0.0.0"
 PORT = 65432

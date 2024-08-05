@@ -42,8 +42,8 @@ def predict(namespace):
             namespace.person_count = person_count
 
 def start_camera_thread(namespace):
-    capture_process = multiprocessing.Process(target=capture_and_draw_frame, args=(namespace,))
-    predict_process = multiprocessing.Process(target=predict, args=(namespace,))
+    capture_process = multiprocessing.Process(target=capture_and_draw_frame, args=(namespace,)) # type: ignore
+    predict_process = multiprocessing.Process(target=predict, args=(namespace,)) # type: ignore
     capture_process.daemon = True
     predict_process.daemon = True
     capture_process.start()

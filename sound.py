@@ -125,6 +125,6 @@ def check_playsound(delay, namespace):
         time.sleep(delay)
 
 def start_sound_process(delay, namespace):
-    process = multiprocessing.Process(target=check_playsound, args=(delay, namespace))
+    process = multiprocessing.Process(target=check_playsound, args=(delay, namespace)) # type: ignore
     process.daemon = True
     process.start()
