@@ -1,9 +1,9 @@
 import pygame # type: ignore
 import multiprocessing
 import time
+pygame.mixer.init()
 
 def play_sound(path):
-    pygame.mixer.init()
     pygame.mixer.music.load(path)
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
@@ -14,6 +14,7 @@ def check_playsound(delay, namespace):
         if namespace.person_count is not None:
             if namespace.person_count >= 1:
                 play_sound("./resources/10_person.mp3")
+            
         time.sleep(delay)
 
 def start_sound_process(delay, namespace):
