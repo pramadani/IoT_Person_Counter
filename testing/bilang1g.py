@@ -2,10 +2,6 @@ import pygame
 import time
 pygame.mixer.init()
 
-# person_count = 20
-# temperature = 23
-# angka = 23
-
 def play_terbilang(angka):
     def terbilang(n):
         satuan = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"]
@@ -113,11 +109,11 @@ def check_playsound(delay, namespace):
         elif namespace.person_count >= 20:
             play_orang_mencapai(namespace.person_count)
             play_ramai()
+
         elif namespace.person_count >= 10:
             play_orang_mencapai(namespace.person_count)
         
         elif namespace.person_count >= 5:
             play_orang_mencapai(namespace.person_count)
-
             
         time.sleep(delay)
