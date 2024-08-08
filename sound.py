@@ -97,7 +97,12 @@ def play_ramai():
         pygame.time.Clock().tick(10)
 
 def check_playsound(delay, namespace):
+    namespace.toggle_sound = True
     while True:
+        if namespace.toggle_sound is False:
+            time.sleep(0.1)
+            continue
+
         if namespace.person_count is None or namespace.temperature is None:
             time.sleep(0.1)
             continue
