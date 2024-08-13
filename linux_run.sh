@@ -2,4 +2,4 @@
 
 source venv/bin/activate
 
-streamlit run app.py
+streamlit run /home/boe/IoT_Person_Counter/app.py

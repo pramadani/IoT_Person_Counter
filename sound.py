@@ -118,7 +118,7 @@ def check_playsound(delay, namespace):
             play_orang_mencapai(namespace.person_count)
 
         if namespace.temperature is not None:
-            if namespace.temperature >= 29:
+            if namespace.temperature >= 31:
                 play_suhu_mencapai(int(namespace.temperature))
                 play_menurunkan_suhu()
                 
