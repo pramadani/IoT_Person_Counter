@@ -9,7 +9,7 @@ from style import add_css
 import gc
 
 chart_delay = 60
-sound_delay = 60
+sound_delay = 30
 
 st.set_page_config(
     layout="wide",
