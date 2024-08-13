@@ -1,8 +1,11 @@
+from ultralytics import YOLO
 import multiprocessing
+import cv2
+from PIL import Image
+import gc
+model = YOLO('./resources/model2.pt')
 
 def capture_and_draw_frame(namespace):
-    import cv2
-    from PIL import Image
     cap = cv2.VideoCapture(0)
 
     while True:
@@ -30,9 +33,7 @@ def capture_and_draw_frame(namespace):
     cap.release()
 
 def predict(namespace):
-    from ultralytics import YOLO
-    model = YOLO('./resources/yolov8n.pt')
-
+    global model
     while True:
         if hasattr(namespace, 'capture'):
             img = namespace.capture
