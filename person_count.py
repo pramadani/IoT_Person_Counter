@@ -2,11 +2,11 @@ from ultralytics import YOLO
 import multiprocessing
 import cv2
 from PIL import Image
-import gc
 model = YOLO('./resources/model2.pt')
+cap = cv2.VideoCapture(0)
 
 def capture_and_draw_frame(namespace):
-    cap = cv2.VideoCapture(0)
+    global cap
 
     while True:
         ret, img = cap.read()

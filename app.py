@@ -8,6 +8,9 @@ from data import update_temp_df, update_count_df
 from style import add_css
 import gc
 
+chart_delay = 60
+sound_delay = 60
+
 st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
@@ -15,11 +18,6 @@ st.set_page_config(
     page_icon="📷"
 )
 add_css(st, "style.css")
-st.markdown("""
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-""", unsafe_allow_html=True)
 
 @st.cache_resource
 def init():
@@ -32,7 +30,7 @@ def init():
     ns.toggle_sound = True
 
     start_temperature_process(ns)
-    start_sound_process(60, ns)
+    start_sound_process(sound_delay, ns)
     start_camera_thread(ns)
     
     return ns
@@ -114,12 +112,12 @@ if __name__ == "__main__":
                 
         with temperature_df_container:
             if ns.temperature is not None:
-                fig_temp = update_temp_df(60, ns.temperature)
+                fig_temp = update_temp_df(chart_delay, ns.temperature)
                 st.plotly_chart(fig_temp, use_container_width=True)
                 
         with person_df_container:
             if ns.person_count is not None:
-                fig_person = update_count_df(60, ns.person_count)
+                fig_person = update_count_df(chart_delay, ns.person_count)
                 st.plotly_chart(fig_person, use_container_width=True)
         
         time.sleep(0.02)

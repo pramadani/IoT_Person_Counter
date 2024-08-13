@@ -103,21 +103,11 @@ def check_playsound(delay, namespace):
             time.sleep(0.1)
             continue
 
-        if namespace.person_count is None or namespace.temperature is None:
+        if namespace.person_count is None:
             time.sleep(0.1)
             continue
 
-        if namespace.temperature >= 27:
-            play_suhu_mencapai(namespace.temperature)
-            play_orang_mencapai(namespace.person_count)
-            play_menurunkan_suhu()
-            
-        elif namespace.temperature <= 20:
-            play_suhu_mencapai(namespace.temperature)
-            play_orang_mencapai(namespace.person_count)
-            play_menaikkan_suhu()
-        
-        elif namespace.person_count >= 20:
+        if namespace.person_count >= 20:
             play_orang_mencapai(namespace.person_count)
             play_ramai()
 
@@ -126,6 +116,15 @@ def check_playsound(delay, namespace):
         
         elif namespace.person_count >= 5:
             play_orang_mencapai(namespace.person_count)
+
+        if namespace.temperature is not None:
+            if namespace.temperature >= 27:
+                play_suhu_mencapai(namespace.temperature)
+                play_menurunkan_suhu()
+                
+            elif namespace.temperature <= 20:
+                play_suhu_mencapai(namespace.temperature)
+                play_menaikkan_suhu()
             
         time.sleep(delay)
 
