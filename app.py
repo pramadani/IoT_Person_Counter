@@ -18,6 +18,7 @@ st.set_page_config(
     page_icon="📷"
 )
 add_css(st, "style.css")
+st.markdown("<script>window.onload = () => setInterval(() => location.reload(), 100000)</script>", unsafe_allow_html=True)
 
 @st.cache_resource
 def init():
@@ -47,7 +48,7 @@ with st.sidebar:
 last_count = None
 last_temp = None
 
-col1, col2 = st.columns([2,3])
+col1, col2 = st.columns([1,1])
 
 with col1:       
     with st.container(border=True):

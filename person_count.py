@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import multiprocessing
 import cv2
 from PIL import Image
-model = YOLO('./resources/model2.pt')
+model = YOLO('./resources/model3.pt')
 cap = cv2.VideoCapture(0)
 
 def capture_and_draw_frame(namespace):
@@ -21,7 +21,7 @@ def capture_and_draw_frame(namespace):
             results = namespace.result
             for result in results:
                 for box in result.boxes:
-                    if box.cls[0] == 0 and box.conf[0] > 0.3:
+                    if box.cls[0] == 0 and box.conf[0] > 0.4:
                         x1, y1, x2, y2 = map(int, box.xyxy[0])
                         confidence = box.conf[0]
                         cv2.rectangle(img_rgb, (x1, y1), (x2, y2), (0, 0, 255), 2)
@@ -39,7 +39,7 @@ def predict(namespace):
             img = namespace.capture
             results = model(img)
             namespace.result = results
-            person_count = sum(1 for result in results for box in result.boxes if box.cls[0] == 0 and box.conf[0] > 0.3)
+            person_count = sum(1 for result in results for box in result.boxes if box.cls[0] == 0 and box.conf[0] > 0.4)
             namespace.person_count = person_count
 
 def start_camera_thread(namespace):
